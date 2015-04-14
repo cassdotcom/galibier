@@ -1,12 +1,12 @@
 ﻿###########################################################
-# .FILE		: CBM_create
+# .FILE		: CBM_Top_Level
 # .AUTHOR  	: A. Cassidy 
 # .DATE    	: 2015-04-10 
 # .EDIT    	: 
-# .FILE_ID	: PSCB0410
+# .FILE_ID	: PSCBM001
 # .COMMENT 	: Top Level CBM Script
 # .INPUT	: NONE
-# .OUTPUT	: LRMM_script.log == Log of script processes
+# .OUTPUT	: 
 #			  	
 #           
 # .VERSION : 0.1
@@ -17,16 +17,44 @@
 # 
 # .INSTRUCTIONS FOR USE
 #
-# 
+#
+#
+###########################################################
+
+
 #----------------------------------------------------------
-#STATIC VARIABLES
+# STATIC VARIABLES
+#----------------------------------------------------------
+$global:USERPATH = "C:\Users\ac00418\"
+
+
+#----------------------------------------------------------
+# REPORTING VARIABLES
 #----------------------------------------------------------
 $CBM_SETTINGS_FILE = "\settings\cmb_settings.ini"
 $CBM_LOG = "\logs\cbm_creation_log.txt"
 $CBM_OUTPUT = "\logs\cbm_models_output.csv"
 
+
+#----------------------------------------------------------
+# USER INTERFACE
+#----------------------------------------------------------
+$ui_console = (Get-Host).UI.RawUI
+$old_bc = $ui_console.BackgroundColor
+$old_fc = $ui_console.ForegroundColor
+$old_title = $ui_console.WindowTitle
+
+$ui_console.BackgroundColor = "white"
+$ui_console.ForegroundColor = "darkred"
+$ui_console.WindowTitle = "CBM Model Creation v1.0 -- Setup"
+
+$table = New-Object system.Data.DataTable "script_output"
+$col1 = New-Object system.Data.DataColumn modelname,([string])
+
+
 # Find list of FY1 models
-"SCRIPT STARTED" | Out-File $CBM_LOG
+$msg_out = "BEGIN SCRIPT"
+set-loading -msg 
 
 Try
 {
@@ -44,3 +72,42 @@ Catch
 	"[ERROR]`t`t$($CBM_SETTINGS_FILE)" | Out-File $CBM_LOG
 	#Exit 1
 }
+}#end process
+
+begin {
+function set-loading
+{
+param (
+    [Parameter(Position=0, mandatory=$true)]
+	[Alias("msg")]
+	[System.String]
+	$msg_out)
+
+Write-Host $msg_out -NoNewline
+
+$scr_buffer = @("")
+
+for($i=0;$i -lt 30; $i++)
+{
+    $scr_buffer = $scr_buffer + "."
+    Write-Host $scr_buffer -NoNewline
+    Start-Sleep -milliseconds 50
+}
+
+Write-Host "`tDONE"
+Start-Sleep 1
+}
+
+
+
+function screen_buffer
+{
+Get-
+
+
+
+
+
+} #end begin
+
+
