@@ -33,3 +33,4 @@ Start-Sleep 2
 $fy1_model_paths_file = "S:\TEST AREA\ac00418\final.txt"
 $model_paths = gc -Path $fy1_model_paths_file
 
+$old_back = $host.UI.RawUI.BackgroundColor
