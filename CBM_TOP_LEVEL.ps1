@@ -22,18 +22,14 @@
 #
 ###########################################################
 
+
+
 # Inputs to script
 Param (
     [Parameter(Position=0, mandatory=$false)]
     [Alias("debug_switch")]
     [System.String]
     $dummy_run)
-
-#----------------------------------------------------------
-# STATIC VARIABLES
-#----------------------------------------------------------
-# 
-$LOCAL_TEST = "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\Scotland Networks\" 
 
 process
 {
@@ -63,7 +59,7 @@ modify_gui -title $gui_title
 
     Try 
     {
-	    $cbm_db = import-csv $CONSTANT_DATA.MODEL_LIST
+	    $cbm_db = import-csv $CBM_SETTINGS.MODEL_LIST
     }
     Catch
     {
@@ -76,26 +72,43 @@ modify_gui -title $gui_title
     #----------------------------------------------------------
     # BEGIN TESTING PATHS
     #----------------------------------------------------------
+    $msg = "1. Test Model Paths"
+    write_line -text $msg
 
+    Try
+    {	# FileNotFound Exception will not cause PShell failure so explicitly state
+        $ErrorActionPreference = "Stop"
+        $valid_list,$not_valid_list,$n_valid,$n_invalid = test_model_paths -model_list $cbm_db
+        Start-Sleep 2
+        $msg = "   Valid: $($n_valid)"
+        write_line -text $msg
+        $msg = "   Not Valid: $($n_invalid)"
+        write_line -text $msg
+        $msg = "   Writing result to file"
+        write_line -text $msg
+        $valid_list | Out-File $CONSTANT_DATA.VALIDATED_LIST
+        $not_valid_list | Out-File $CONSTANT_DATA.INVALIDATED_LIST
+    }
+    Catch
+    {
+        $msg = "WARNING: UNABLE TO LOCATE MODEL LIST"
+        write_line -text $msg -siren True
+    }
 
+}#end process
 
 
 
 
 begin 
 {
-# functionality test
-if ( $dummy_run )
-{
-    Write-Host $dummy_run
-}
-else
-{
 
-# Create data structure for reporting
-# Find if script is run off-line or network
-$CBM_SETTINGS = New-Object psobject
-$CBM_SETTINGS = get_cbm_settings -location $LOCAL_TEST
+
+#----------------------------------------------------------
+# STATIC VARIABLES
+#----------------------------------------------------------
+# 
+$LOCAL_TEST = "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\Scotland Networks\" 
 
 function get_cbm_settings
 {
@@ -109,7 +122,7 @@ $CONSTANT_DATA = New-Object psobject
 if (Test-Path $run_environment)
 { # Can access network drives
     $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name USERPATH -Value "C:\Users\ac00418\"
-    $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name MODEL_LIST -Value "\settings\cbm_model_list.txt"
+    $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name MODEL_LIST -Value "C:\Users\ac00418\Desktop\synergee_scripts\CBM\model_data\sgn_network_models.csv"
 
     #----------------------------------------------------------
     # REPORTING VARIABLES
@@ -140,17 +153,34 @@ else
 #----------------------------------------------------------
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name width_of_console -Value 92
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name gui_height -Value 50
-$CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name gui_width -Value 125
+$CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name gui_width -Value 120
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name dash -Value "-"
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name double_dash -Value "$($CONSTANT_DATA.dash)$($CONSTANT_DATA.dash)"
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name indent -Value 5
-$CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name scr_buffer_blankline -Value (" " * $CONSTANT_DATA.width_of_console+2)
+$CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name scr_buffer_blankline -Value (" " * ($CONSTANT_DATA.width_of_console+2))
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name scr_buffer_box -Value ("  " +("$($CONSTANT_DATA.dash)" * $CONSTANT_DATA.width_of_console))
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name scr_buffer_box_nil -Value ("  " + $CONSTANT_DATA.double_dash + (" " * ($CONSTANT_DATA.width_of_console - 4)) + $CONSTANT_DATA.double_dash)
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name scr_buffer_indent -Value ("  " + $CONSTANT_DATA.double_dash + "  ")
 
 return $CONSTANT_DATA
 }#end get_cbm_settings
+
+
+
+# functionality test
+if ( $dummy_run )
+{
+    Write-Host $dummy_run
+}
+else
+{
+
+# Create data structure for reporting
+# Find if script is run off-line or network
+$CBM_SETTINGS = New-Object psobject
+$CBM_SETTINGS = get_cbm_settings -location $LOCAL_TEST
+
+
 
 
 #----------------------------------------------------------
@@ -185,6 +215,10 @@ function modify_gui
         $ui_console.WindowTitle = $gui_title
 
         # Resize window
+        $buffsize = $ui_console.buffersize
+		$buffsize.height = $new_height
+        $buffsize.Width = $new_width
+        $ui_console.BufferSize = $buffsize
         $newsize = $ui_console.windowsize
         $newsize.height = $new_height
         $newsize.width = $new_width
@@ -212,9 +246,8 @@ function complete_line
 	    [System.int32]
 	    $column,
         [Parameter(Position=1, mandatory=$false)]
-	    [Alias("alarm")]
-	    [switch]
-        [$alarm])
+	    [Switch]
+        $alarm)
     
     $lineRemaining = $CBM_SETTINGS.width_of_console - $column
     if ($alarm)
@@ -250,48 +283,48 @@ function write_header
 	    [System.string]
 	    $script_title)
 
-    Write-Host $scr_buffer_blankline
-	Write-Host $scr_buffer_blankline
-	Write-Host $scr_buffer_box
-	Write-Host $scr_buffer_box
-	Write-Host $scr_buffer_box_nil
+    Write-Host $CBM_SETTINGS.scr_buffer_blankline
+	Write-Host $CBM_SETTINGS.scr_buffer_blankline
+	Write-Host $CBM_SETTINGS.scr_buffer_box
+	Write-Host $CBM_SETTINGS.scr_buffer_box
+	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
 
     # Title of script
-    $text = $scr_buffer_indent + $script_title
+    $text = $CBM_SETTINGS.scr_buffer_indent + $script_title
 	$column = $text.length
 	Write-Host $text -NoNewLine
 	complete_line $column
-	Write-Host $double_dash
+	Write-Host $CBM_SETTINGS.double_dash
 
     # Underline the title
-    $underline = ($dash * ($script_title.Length))	
-	$text = $scr_buffer_indent + $underline
+    $underline = ($CBM_SETTINGS.dash * ($script_title.Length))	
+	$text = $CBM_SETTINGS.scr_buffer_indent + $underline
 	$column = $text.length
 	Write-Host $text -NoNewLine
 	complete_line $column
-	Write-Host $double_dash	
+	Write-Host $CBM_SETTINGS.double_dash	
     
     # empty lines
-    Write-Host $scr_buffer_box_nil
+    Write-Host $CBM_SETTINGS.scr_buffer_box_nil
 
     # user
-    $text = $scr_buffer_indent + "USER: " + $user_name
+    $text = $CBM_SETTINGS.scr_buffer_indent + "USER: " + $user_name
     $column = $text.Length
 	Write-Host $text -NoNewLine
 	complete_line $column
-	Write-Host $double_dash
+	Write-Host $CBM_SETTINGS.double_dash
 
     # date
-    $text = $scr_buffer_indent + $run_date
+    $text = $CBM_SETTINGS.scr_buffer_indent + $run_date
     $column = $text.Length
 	Write-Host $text -NoNewLine
 	complete_line $column
-	Write-Host $double_dash
-    Write-Host $scr_buffer_box_nil
+	Write-Host $CBM_SETTINGS.double_dash
+    Write-Host $CBM_SETTINGS.scr_buffer_box
 
     
-	Write-Host $scr_buffer_box
-	Write-Host $scr_buffer_box_nil    
+	Write-Host $CBM_SETTINGS.scr_buffer_box
+	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
 
 }#end write_header
 
@@ -313,20 +346,20 @@ function write_line
 	    [System.string]
 	    $alarm)
 
-    $text = $scr_buffer_indent + $msg
+    $text = $CBM_SETTINGS.scr_buffer_indent + $msg
     $column = $text.Length
 
     if ($alarm)
     {
         Write-Host $text -ForegroundColor Yellow -BackgroundColor Black -NoNewline 
 	    complete_line $column -alarm
-	    Write-Host $double_dash -ForegroundColor Yellow -BackgroundColor Black
+	    Write-Host $CBM_SETTINGS.double_dash -ForegroundColor Yellow -BackgroundColor Black
     }
     else
     {
         Write-Host $text -NoNewLine
 	    complete_line $column
-	    Write-Host $double_dash
+	    Write-Host $CBM_SETTINGS.double_dash
     }
 
 }#end write_line
@@ -345,14 +378,14 @@ function write_new_section
 	    $msg)
 
     
-	Write-Host $scr_buffer_box
-	Write-Host $scr_buffer_box_nil
+	Write-Host $CBM_SETTINGS.scr_buffer_box
+	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
 
-    $text = $scr_buffer_indent + $msg
+    $text = $CBM_SETTINGS.scr_buffer_indent + $msg
     $column = $text.Length
 	Write-Host $text -NoNewLine
 	complete_line $column
-	Write-Host $double_dash
+	Write-Host $CBM_SETTINGS.double_dash
 }#end write_line
 
 
@@ -366,7 +399,7 @@ function test_model_paths
     Param (
         [Parameter(Position=0, mandatory=$true)]
         [Alias("model_list")]
-        [System.string]
+        [System.Object]
         $model_db)
     
     $valid_list = @()
