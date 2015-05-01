@@ -29,73 +29,9 @@ Param (
     [Parameter(Position=0, mandatory=$false)]
     [Alias("debug_switch")]
     [System.String]
-    $dummy_run)
-
-process
-{
-    
-#----------------------------------------------------------
-# USER INTERFACE
-#----------------------------------------------------------
-$gui_title = "NETWORK PLANNING CBM 14-15 CREATION SCRIPT"
-modify_gui -title $gui_title
+    $debug_sw)
 
 
-    #----------------------------------------------------------
-    # WRITE SCRIPT HEADER
-    #----------------------------------------------------------
-    # Write script header
-    $scipt_title = "CBM CREATION SCRIPT v1.0"
-    $cbm_user = $env:USERNAME
-    $cbm_date = (Get-Date).ToString("yyyy-MM-dd @ hh:mm:ss")
-    write_header -user $cbm_user -date $cbm_date -title $scipt_title
-
-
-    #----------------------------------------------------------
-    # LOAD MODEL DB
-    #----------------------------------------------------------
-    $msg = "Load model DB"
-    write_line -text $msg
-
-    Try 
-    {
-	    $cbm_db = import-csv $CBM_SETTINGS.MODEL_LIST
-    }
-    Catch
-    {
-        $msg = "TERMINATE: COULD NOT IMPORT MODEL DATA"
-        write_line -text $msg
-        break
-    }
-
-
-    #----------------------------------------------------------
-    # BEGIN TESTING PATHS
-    #----------------------------------------------------------
-    $msg = "1. Test Model Paths"
-    write_line -text $msg
-
-    Try
-    {	# FileNotFound Exception will not cause PShell failure so explicitly state
-        $ErrorActionPreference = "Stop"
-        $valid_list,$not_valid_list,$n_valid,$n_invalid = test_model_paths -model_list $cbm_db
-        Start-Sleep 2
-        $msg = "   Valid: $($n_valid)"
-        write_line -text $msg
-        $msg = "   Not Valid: $($n_invalid)"
-        write_line -text $msg
-        $msg = "   Writing result to file"
-        write_line -text $msg
-        $valid_list | Out-File $CONSTANT_DATA.VALIDATED_LIST
-        $not_valid_list | Out-File $CONSTANT_DATA.INVALIDATED_LIST
-    }
-    Catch
-    {
-        $msg = "WARNING: UNABLE TO LOCATE MODEL LIST"
-        write_line -text $msg -siren True
-    }
-
-}#end process
 
 
 
@@ -108,7 +44,13 @@ begin
 # STATIC VARIABLES
 #----------------------------------------------------------
 # 
-$LOCAL_TEST = "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\Scotland Networks\" 
+$LOCAL_TEST = "C:\Users\ac00418" 
+$dummy_run = 0
+
+if ( $debug_sw )
+{
+    write-host "IN STATIC"
+}
 
 function get_cbm_settings
 {
@@ -148,12 +90,17 @@ else
     $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name INVALIDATED_LIST -Value "\cbm_invalidated_list.txt"
 }
 
+if ( $debug_sw )
+{
+    write-host "IN CBM VARIABLES"
+}
+
 #----------------------------------------------------------
 # GUI VARIABLES
 #----------------------------------------------------------
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name width_of_console -Value 92
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name gui_height -Value 50
-$CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name gui_width -Value 120
+$CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name gui_width -Value 100
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name dash -Value "-"
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name double_dash -Value "$($CONSTANT_DATA.dash)$($CONSTANT_DATA.dash)"
 $CONSTANT_DATA | Add-Member -MemberType NoteProperty -Name indent -Value 5
@@ -201,6 +148,11 @@ function modify_gui
 	    [Alias("width")]
 	    [System.String]
 	    $new_width = $CBM_SETTINGS.gui_width)
+
+if ( $debug_sw )
+{
+    write-host "IN MODIFY"
+}
     
     Try
     {
@@ -320,9 +272,8 @@ function write_header
 	Write-Host $text -NoNewLine
 	complete_line $column
 	Write-Host $CBM_SETTINGS.double_dash
-    Write-Host $CBM_SETTINGS.scr_buffer_box
-
-    
+	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
+    Write-Host $CBM_SETTINGS.scr_buffer_box    
 	Write-Host $CBM_SETTINGS.scr_buffer_box
 	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
 
@@ -406,11 +357,24 @@ function test_model_paths
     $not_valid_list = @()
 
     $model_list = $model_db.FY1_PATH
+    $name_list = $model_db.NAME
+    $region_list = $model_db.REGION
 
     # Assigning i will give ID, allowing models to be referenced later on.
     $i = 1
     foreach ($m in $model_list)
     {
+        $msg = "`r" + $CBM_SETTINGS.scr_buffer_indent
+        Write-Host $msg -NoNewline
+        $msg2 = $region_list[$i]
+        Write-Host $msg2 -ForegroundColor DarkBlue -NoNewline
+        $msg3 = ": "
+        Write-Host $msg3 -NoNewLine
+        $msg4 = $name_list[$i]
+        Write-Host $msg4 -ForegroundColor Blue -NoNewline
+        $lineRemaining = (" " * ($CBM_SETTINGS.width_of_console - ($msg.Length + $msg2.length + $msg3.Length + $msg4.length) + 1))
+        Write-host $lineRemaining -NoNewline
+        Write-Host $CBM_SETTINGS.double_dash -NoNewline
         if ( Test-Path $m)
         { # true
             $valid_list += "$($m),$($i)"
@@ -421,10 +385,17 @@ function test_model_paths
         }
 
         $i++
+        # Start-Sleep 1
+        $msg = "`r" + $CBM_SETTINGS.scr_buffer_box_nil
+        Write-Host $msg -NoNewline
     }
 
     $n_valid = $valid_list.Length
     $n_invalid = $not_valid_list.Length
+
+    $msg = "DONE"
+    Write-host " "
+    write_line -text $msg
 
     return $valid_list,$not_valid_list,$n_valid,$n_invalid
 }# end test_model_paths
@@ -436,8 +407,108 @@ function test_model_paths
 
 
 
+process
+{
+    
+#----------------------------------------------------------
+# USER INTERFACE
+#----------------------------------------------------------
+$gui_title = "NETWORK PLANNING CBM 14-15 CREATION SCRIPT"
+modify_gui -title $gui_title
+
+
+    #----------------------------------------------------------
+    # WRITE SCRIPT HEADER
+    #----------------------------------------------------------
+    # Write script header
+    $scipt_title = "CBM CREATION SCRIPT v1.0"
+    $cbm_user = $env:USERNAME
+    $cbm_date = (Get-Date).ToString("yyyy-MM-dd @ hh:mm:ss")
+    write_header -user $cbm_user -date $cbm_date -title $scipt_title
+
+    #----------------------------------------------------------
+    # SECTION DETAILING SETUP - WHAT GETS SAVED WHERE ETC 
+
+    # LOAD MODEL DB
+    #----------------------------------------------------------
+    $msg = "Script log: " + $CBM_SETTINGS.CBM_LOG
+    write_line -text $msg
+    $msg = "Valid List: " + $CBM_SETTINGS.VALIDATED_LIST
+    write_line -text $msg
+    $msg = "   "
+    write_line -text $msg
+    $msg = "Loading model database"
+    write_line -text $msg
+
+    Try 
+    {
+	    $cbm_db = import-csv $CBM_SETTINGS.MODEL_LIST
+    }
+    Catch
+    {
+        $msg = "TERMINATE: COULD NOT IMPORT MODEL DATA"
+        write_line -text $msg
+        break
+    }
+
+    write-host $CBM_SETTINGS.scr_buffer_box_nil
+    Write-Host $CBM_SETTINGS.scr_buffer_box
+    Write-Host $CBM_SETTINGS.scr_buffer_box
+    write-host $CBM_SETTINGS.scr_buffer_box_nil
+
+    #----------------------------------------------------------
+    # BEGIN TESTING PATHS
+    #----------------------------------------------------------
+    $msg = "1. Test Model Paths"
+    write_line -text $msg
+
+    Try
+    {	# FileNotFound Exception will not cause PShell failure so explicitly state
+        $ErrorActionPreference = "Stop"
+        $valid_list,$not_valid_list,$n_valid,$n_invalid = test_model_paths -model_list $cbm_db
+        Start-Sleep 2
+
+        $msg = $CBM_SETTINGS.scr_buffer_indent + "   Valid:" 
+        write-host $msg -NoNewline
+        $msg2 = " $($n_valid)"
+        write-host $msg2 -ForegroundColor DarkBlue -NoNewline
+        $lineRemaining = (" " * ($CBM_SETTINGS.width_of_console - ($msg.Length + $msg2.length)))
+        Write-host $lineRemaining -NoNewline
+        Write-Host $CBM_SETTINGS.double_dash
+
+        $msg = $CBM_SETTINGS.scr_buffer_indent + "   Not Valid:" 
+        write-host $msg -NoNewline
+        $msg2 = " $($n_invalid)"
+        write-host $msg2 -ForegroundColor Red -NoNewline
+        $lineRemaining = (" " * ($CBM_SETTINGS.width_of_console - ($msg.Length + $msg2.length)))
+        Write-host $lineRemaining -NoNewline
+        Write-Host $CBM_SETTINGS.double_dash
+    }
+    Catch
+    {
+        $msg = "WARNING: UNABLE TO LOCATE MODEL LIST"
+        write_line -text $msg 
+    }
+
+    Try
+    {    
+        $msg = "   Writing result to file"
+        write_line -text $msg
+        $valid_list | Out-File $CONSTANT_DATA.VALIDATED_LIST
+        $not_valid_list | Out-File $CONSTANT_DATA.INVALIDATED_LIST
+    }
+    Catch
+    {
+        $msg = "WARNING: UNABLE TO WRITE TO VALID / INVALID LIST"
+        write_line -text $msg
+    }
+
+}#end process
+
 end
 {
+    start-sleep 5
+    $bb = read-host "Continue?"
     # return console to normal    
     $ui_console = (Get-Host).UI.RawUI
     $old_bc = $ui_console.BackgroundColor
