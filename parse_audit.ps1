@@ -23,6 +23,7 @@
 #
 ###########################################################
 
+begin {
 
 param(
     ## The path to colorize
@@ -35,6 +36,8 @@ param(
     ## Switch to exclude line numbers
     [Switch] $ExcludeLineNumbers
 )
+
+test
 
 Set-StrictMode -Version Latest
 
