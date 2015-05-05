@@ -22,27 +22,15 @@
 #
 ###########################################################
 
-# Inputs to script
-Param (
-    [Parameter(Position=0, mandatory=$false)]
-    [Alias("debug_switch")]
-    [System.String]
-    $dummy_run)
-
-#----------------------------------------------------------
-# STATIC VARIABLES
-#----------------------------------------------------------
-# 
-$LOCAL_TEST = "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\Scotland Networks\" 
 
 process
 {
     
-#----------------------------------------------------------
-# USER INTERFACE
-#----------------------------------------------------------
-$gui_title = "NETWORK PLANNING CBM 14-15 CREATION SCRIPT"
-modify_gui -title $gui_title
+    #----------------------------------------------------------
+    # USER INTERFACE
+    #----------------------------------------------------------
+    $gui_title = "NETWORK PLANNING CBM 14-15 CREATION SCRIPT"
+    modify_gui -title $gui_title
 
 
     #----------------------------------------------------------
@@ -68,7 +56,7 @@ modify_gui -title $gui_title
     Catch
     {
         $msg = "TERMINATE: COULD NOT IMPORT MODEL DATA"
-        write_line -text $msg
+        write_line -text $msg -alarm
         break
     }
 
@@ -76,7 +64,38 @@ modify_gui -title $gui_title
     #----------------------------------------------------------
     # BEGIN TESTING PATHS
     #----------------------------------------------------------
+    $msg = "1. Test Model Paths"
+    write_line -text $msg
 
+    Try
+    {	# FileNotFound Exception will not cause PShell failure so explicitly state
+        $ErrorActionPreference = "Stop"
+        $valid_list,$not_valid_list,$n_valid,$n_invalid = test_model_paths -model_list $cbm_db
+        Start-Sleep 2
+        $msg = "   Valid: $($n_valid)"
+        write_line -text $msg
+        $msg = "   Not Valid: $($n_invalid)"
+        write_line -text $msg
+        $msg = "   Writing result to file"
+        write_line -text $msg
+        $valid_list | Out-File $CONSTANT_DATA.VALIDATED_LIST
+        $not_valid_list | Out-File $CONSTANT_DATA.INVALIDATED_LIST
+    }
+    Catch
+    {
+        $msg = "WARNING: UNABLE TO LOCATE MODEL LIST"
+        write_line -text $msg -siren True
+    }
+
+
+    #----------------------------------------------------------
+    # TEST CBM_FOLDERS
+    #----------------------------------------------------------
+    $msg = "2. Test CBM Folders exist"
+    write_new_section -text $msg
+
+
+}#end process-
 
 
 
@@ -84,10 +103,23 @@ modify_gui -title $gui_title
 
 begin 
 {
+
+# Inputs to script
+Param (
+    [Parameter(Position=0, mandatory=$false)]
+    [Alias("debug_switch")]
+    [System.String]
+    $dummy_run)
+
+#----------------------------------------------------------
+# STATIC VARIABLES
+#----------------------------------------------------------
+# 
+$LOCAL_TEST = "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\Scotland Networks\" 
 # functionality test
 if ( $dummy_run )
 {
-    Write-Host $dummy_run
+    Write-Host "DUMMY RUN"
 }
 else
 {
@@ -214,7 +246,7 @@ function complete_line
         [Parameter(Position=1, mandatory=$false)]
 	    [Alias("alarm")]
 	    [switch]
-        [$alarm])
+        $alarm)
     
     $lineRemaining = $CBM_SETTINGS.width_of_console - $column
     if ($alarm)
