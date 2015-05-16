@@ -257,13 +257,13 @@ function catch_error
     write_to_log "$('-' * 50)" $PSHELL_LOG_FILE
     write_to_log " -- SCRIPT PROCESSING CANCELLED" $PSHELL_LOG_FILE
     write_to_log " $('-' * 50)" $PSHELL_LOG_FILE
-    write_to_log "" $PSHELL_LOG_FILE
+    write_to_log " " $PSHELL_LOG_FILE
     write_to_log " Error in $($error_name)" $PSHELL_LOG_FILE
-    write_to_log "" $PSHELL_LOG_FILE
+    write_to_log " " $PSHELL_LOG_FILE
     write_to_log "$('-' * 50)" $PSHELL_LOG_FILE
     write_to_log " -- Error information" $PSHELL_LOG_FILE
     write_to_log " $('-' * 50)" $PSHELL_LOG_FILE
-    write_to_log "" $PSHELL_LOG_FILE
+    write_to_log " " $PSHELL_LOG_FILE
     write_to_log " Line Number: $($err.InvocationInfo.ScriptLineNumber)" $PSHELL_LOG_FILE
     write_to_log " Offset: $($err.InvocationInfo.OffsetInLine)" $PSHELL_LOG_FILE
     write_to_log " Command: $($err.InvocationInfo.MyCommand)" $PSHELL_LOG_FILE
@@ -372,10 +372,10 @@ function complete_line
 	    [System.int32]
 	    $column,
         [Parameter(Position=1, mandatory=$true)]
-	    [System.Object]
-        $CBM_SETTINGS)
+	    [System.int32]
+        $width_of_console)
     
-    $lineRemaining = $CBM_SETTINGS.width_of_console - $column
+    $lineRemaining = $width_of_console - $column
     Write-Host -NoNewLine (" " * $lineRemaining)
         
 }#end complete_line
@@ -404,7 +404,7 @@ function underline_title
 	$text = $CBM_SETTINGS.scr_buffer_indent + $underline
 	$column = $text.length
 	Write-Host $text -NoNewLine
-	complete_line $column $CBM_SETTINGS
+	complete_line $column $CBM_SETTINGS.width_of_console
 	Write-Host $CBM_SETTINGS.double_dash	
 
 }#end underline_title
@@ -442,7 +442,7 @@ function write_header
     $text = $CBM_SETTINGS.scr_buffer_indent + $script_title
 	$column = $text.length
 	Write-Host $text -NoNewLine
-	complete_line $column $CBM_SETTINGS
+	complete_line $column $CBM_SETTINGS.width_of_console
 	Write-Host $CBM_SETTINGS.double_dash
 
     # Underline the title
@@ -455,14 +455,14 @@ function write_header
     $text = $CBM_SETTINGS.scr_buffer_indent + "USER: " + $CBM_SETTINGS.CBMUSER
     $column = $text.Length
 	Write-Host $text -NoNewLine
-	complete_line $column $CBM_SETTINGS
+	complete_line $column $CBM_SETTINGS.width_of_console
 	Write-Host $CBM_SETTINGS.double_dash
 
     # date
     $text = $CBM_SETTINGS.scr_buffer_indent + $run_date
     $column = $text.Length
 	Write-Host $text -NoNewLine
-	complete_line $column $CBM_SETTINGS
+	complete_line $column $CBM_SETTINGS.width_of_console
 	Write-Host $CBM_SETTINGS.double_dash
 	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
     Write-Host $CBM_SETTINGS.scr_buffer_box    
@@ -470,6 +470,32 @@ function write_header
 	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
 
 }#end write_header
+
+
+#----------------------------------------------------------
+# .function_WRITE_LINE
+#----------------------------------------------------------
+function write_line
+{
+    Param (
+        [Parameter(Position=0, mandatory=$true)]
+	    [System.string]
+	    $msg,
+		[Parameter(Position=1, mandatory=$true)]
+	    [System.Object]
+	    $CBM_SETTINGS)
+
+    $text = $CBM_SETTINGS.scr_buffer_indent + $msg
+    $column = $text.Length
+
+ 
+	Write-Host $text -NoNewLine
+	complete_line $column $CBM_SETTINGS.width_of_console
+	Write-Host $CBM_SETTINGS.double_dash
+
+
+}#end write_line
+
 
 
 
@@ -506,4 +532,13 @@ function write_model_name
 
 
 
+}
 
+
+
+
+End {
+
+write-host "DONE"
+
+}
