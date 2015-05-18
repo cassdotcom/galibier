@@ -1,24 +1,23 @@
 ###########################################################
 # .FILE		: CBM-Create
 # .AUTHOR  	: A. Cassidy 
-# .DATE    	: 2015-04-10 
+# .DATE    	: 2015-05-19 
 # .EDIT    	: 
-# .FILE_ID	: PSCBM001
-# .COMMENT 	: Top Level CBM Script
-# .INPUT	: debug_switch: cause no execution
+# .FILE_ID	: PSCBM002
+# .COMMENT 	: Create CBM models
+# .INPUT	: 
 # .OUTPUT	: Valid & Not-Valid Model Paths
 #			  	
 #           
-# .VERSION : 0.2
+# .VERSION : 1.0
 ###########################################################
 # 
 # .CHANGELOG
-# Version 0.2: 2015-04-26 Reformatted
-# Version 0.1: 2015-04-10 First version
+# Version 1 : 
 # 
 # .INSTRUCTIONS FOR USE
 # Function declarations are at the end of the file.
-# Batch file: C:\Users\ac00418\Documents\CBM_repo\CBM_Script.bat
+# Batch file: S:\TEST AREA\ac00418\CBM\rev_i\CBM_Script.bat
 #
 #
 ###########################################################
@@ -37,7 +36,7 @@ Process {
 	# SETTINGS FILE
 	$SETTINGS_FILE = "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\TEST AREA\ac00418\CBM\settings\cbm_pshell_settings.csv"
 	# LOG FILE
-	$PSHELL_LOG_FILE = "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\TEST AREA\ac00418\CBM\logs\cbm_pshell_log.txt"
+	$PSHELL_LOG_FILE = get_log_file "\\scotia.sgngroup.net\dfs\shared\Syn4.2.3\TEST AREA\ac00418\CBM\logs\"
 	# Set to "stop" to catch errors
 	$ErrorActionPreference = 'Stop'
 	
@@ -99,7 +98,7 @@ Process {
 		
 		$this_err = $_
 		$error_name = "2. SPLIT SETTINGS"
-		catch_error $this_err $error_name
+		catch_error $this_err $error_name $PSHELL_LOG_FILE
 		
 	} # end split settings
 	
@@ -108,7 +107,6 @@ Process {
 	#----------------------------------------------------------
 	# 3. MODIFY THE CONSOLE
 	#----------------------------------------------------------
-	
 	# Change title
 	Try {
 
@@ -159,11 +157,17 @@ Process {
 		write_to_log $msg $PSHELL_LOG_FILE
 		
 		write_line $msg $CBM_SETTINGS
+		underline_title -underline_this $msg $CBM_SETTINGS
 
 		$fy1_models = Import-Csv $CBM_SETTINGS.MODEL_LIST
+		$n_of_models = $fy1_models.length
 		
 		$msg = ".....OK"
 		write_to_log $msg $PSHELL_LOG_FILE
+		
+		write_line " " $CBM_SETTINGS
+		$msg = "$($n_of_models) models to be copied"
+		write_line $msg $CBM_SETTINGS
 
 	} Catch { 
 		
@@ -178,9 +182,12 @@ Process {
 	# 4. TEST FY1 PATH  
 	#----------------------------------------------------------
 	$msg = "TEST FY1 PATH"
+	graphical_new_section $msg $CBM_SETTINGS
+	
 	write_to_log $msg $PSHELL_LOG_FILE
 	
-	write_line $msg $CBM_SETTINGS
+	$valid_fy1 = 0
+	$not_valid_fy1 = 0
 
 	foreach ( $model in $fy1_models ) {
 		Try {
@@ -191,17 +198,197 @@ Process {
 			
 			if ( Test-Path $model.FY1_PATH ) {
 				$model.FY1_VALID = "YES"
+				$valid_fy1++
+				$msg = "[ ]`t[$($region)]:$($net_name)`tVALID"
+			} else {
+				$model.FY1_VALID = "NO"
+				$not_valid_fy1++
+				$msg = "[X]`t[$($region)]:$($net_name)`tMISSING"
 			}
+			
+			write_to_log $msg $PSHELL_LOG_FILE				
 
 		} Catch { 
 		
 			$this_err = $_
 			$error_name = "TEST PATH: FY1"
-			catch_error $this_err $error_name
+			catch_error $this_err $error_name $PSHELL_LOG_FILE
 
-		}
+		} Finally {
+			
+			start-sleep 1 
+			
+		}		
 	} # END TEST FY1 PATH
+	
+	Try {
+		
+		report_to_console $valid_fy1 $not_valid_fy1 $CBM_SETTINGS $PSHELL_LOG_FILE
+		
+	} Catch {
+	
+		$this_err = $_
+		$error_name = "FY1 REPORT TO CONSOLE"
+		catch_error $this_err $error_name $PSHELL_LOG_FILE
+		
+	}
+	
+	
+	#----------------------------------------------------------
+	# 5. TEST CBM LOCATION  
+	#----------------------------------------------------------
+	$msg = "TEST CBM PATHS"
+	graphical_new_section $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+	
+	$valid_cbm = 0 
+	$not_valid_cbm = 0
+	
+	foreach ( $cbm in $fy1_models ) {
+		Try {
+			$net_name = $cbm.NAME
+			$region = $cbm.REGION
+			write_model_name $CBM_SETTINGS $net_name $region
+			
+			if ( Test-Path $cbm.CBM_FOLDER ) {
+				$cbm.CBM_VALID = "YES"
+				$valid_cbm++
+				$msg = "[ ]`t[$($region)]:$($net_name)`tVALID"
+			} else {
+				$model.CBM_VALID = "NO"
+				$not_valid_cbm++
+				$msg = "[X]`t[$($region)]:$($net_name)`tMISSING"
+			}
+			
+			write_to_log $msg $PSHELL_LOG_FILE
+			
+		} Catch { 
+		
+			$this_err = $_
+			$error_name = "TEST PATH: CBM"
+			catch_error $this_err $error_name $PSHELL_LOG_FILE
+
+		} Finally {
+			
+			start-sleep 1 
+			
+		}		
+		
+	} # END TEST CBM LOC
+	
+	Try {
+	
+		report_to_console $valid_cbm $not_valid_cbm $CBM_SETTINGS $PSHELL_LOG_FILE
+		
+	} Catch {
+	
+		$this_err = $_
+		$error_name = "CBM REPORT TO CONSOLE"
+		catch_error $this_err $error_name $PSHELL_LOG_FILE
+		
+	}		
+	
+	
+	
+	
+	
+	#----------------------------------------------------------
+	# 6. COPY MODELS 
+	#----------------------------------------------------------
+	$msg = "COPY MODELS"
+	graphical_new_section $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+	
+	$valid_list = $fy1_models | Where-Object { $_.FY1_VALID -match "YES" -and $_.CBM_VALID -match "YES" } | Select ID
+	$msg = "$($valid_list.length) models will be copied" 
+	write_line $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+		
+	foreach ( $id in $valid_list ) {
+		Try {
+		
+			$net_name = $fy1_models | Where-Object { $_.ID -contains $id.ID } | Select NAME
+			$region = $fy1_models | Where-Object { $_.ID -contains $id.ID } | Select REGION
+			write_model_name $CBM_SETTINGS $net_name.NAME $region.REGION
+		
+			$src = $fy1_models | Where-Object { $_.ID -contains $id.ID } | Select FY1_PATH
+			$dest = $fy1_models | Where-Object { $_.ID -contains $id.ID } | Select CBM_PATH
+			
+			Copy-Item -path $src.FY1_PATH -destination $dest.CBM_PATH
+			
+		} Catch {
+			
+			$this_err = $_
+			$error_name = "COPY MODELS"
+			catch_error $this_err $error_name $PSHELL_LOG_FILE
+		
+		}
+		
+		$msg = "COPY: $($net_name.NAME)"
+		write_to_log $msg $PSHELL_LOG_FILE
+		
+	}
+	
+	
+	
+	
+	
+	
+	#----------------------------------------------------------
+	# 7. TEST COPY
+	#----------------------------------------------------------
+	$msg = "TEST COPIED MODELS"
+	graphical_new_section $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+	
+	$copied_OK = 0
+	
+	foreach ( $id in $valid_list ) {
+		Try {
+		
+			$mod = $fy1_models | Where-Object { $_.ID -contains $id.ID } | Select CBM_PATH
+			if ( Test-Path $mod ) {
+				$fy1_models | Where-Object { $_.ID -contains $id.ID } | foreach { $_.CBM_DONE = "YES" }
+				$copied_OK++
+			}
+			
+		} Catch {
+			
+			$this_err = $_
+			$error_name = "TEST COPIED MODELS"
+			catch_error $this_err $error_name $PSHELL_LOG_FILE
+		
+		}
+		
+	}
+	
+	# WRITE LISTS
+	$msg = "WRITING RESULTS TO FILE"
+	graphical_new_section $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+	$uncopied = $fy1_models | Where-Object { $_.CBM_DONE -match "NO" } | Out-File $CBM_SETTINGS.NOT_VALID_LIST
+	$copied = $fy1_models | Where-Object { $_.CBM_DONE -match "YES" } | Out-File $CBM_SETTINGS.VALID_LIST
+	
+	$msg = "$($copied_OK) models copied successfully"
+	write_line $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+	
+	write-host $CBM_SETTINGS.scr_buffer_box_nil
+	write-host $CBM_SETTINGS.scr_buffer_box_nil
+	write-host $CBM_SETTINGS.scr_buffer_box
+	write-host $CBM_SETTINGS.scr_buffer_box
+	
+	Try {
+		$fy1_models | Export-Csv $CBM_SETTINGS.MODEL_LIST
+	} Catch {
+		$msg = "COULD NOT UPDATE NETWORKS DB"
+	}
 }
+
+
+
+
+
 
 
 
@@ -215,6 +402,38 @@ function Get-TimeStamp
 {
     Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 }
+
+
+
+
+#----------------------------------------------------------
+# .function_GET_LOG_FILE
+#----------------------------------------------------------
+function get_log_file
+{
+	Param(
+		[Parameter(Position=0, Mandatory=$true)]
+		[System.string]
+		$log_dir)
+	
+	# Find what is in this directory	
+	$log_files = gci $log_dir
+	
+	# Move everything into 'old' directory so our log is the only file available here
+	foreach ( $log in $log_files ) {
+		if ( -Not $log.PSIsContainer ) {
+			$dest = $log_dir + "\old\" + $log.name
+			Move-Item -Path $log.FullName -Destination $dest
+		}
+	}
+	$log_ext = Get-Date -UFormat "%d%b_%H-%M-%S"
+	$PSHELL_LOG_FILE = $log_dir + "\cbm-create-log." + $log_ext
+		
+	return $PSHELL_LOG_FILE
+	
+}
+	
+		
 
 
 
@@ -285,15 +504,14 @@ function write_to_log
 	Param (
 		[Parameter(Position=0, Mandatory=$true)]
 		[System.String]
-		$msg_raw,
+		$msg,
 		[Parameter(Position=1, Mandatory=$true)]
 		[System.String]
 		$PSHELL_LOG_FILE)
 	
 	Try {
 	
-		$msg = Get-TimeStamp + $msg_raw
-		$msg | Out-File $PSHELL_LOG_FILE
+		"$(Get-TimeStamp):`t$($msg)" | Out-File -filepath $PSHELL_LOG_FILE -append
 		
 	} Catch {
 		
@@ -349,7 +567,7 @@ function modify_gui
     {
         $this_err = $_
         $error_name = "UI CONSOLE MODIFY"
-        catch_error $this_err $error_name
+        catch_error $this_err $error_name $PSHELL_LOG_FILE
         Write-Warning "UNABLE TO MODIFY CONSOLE"
     }
 
@@ -472,6 +690,8 @@ function write_header
 }#end write_header
 
 
+
+
 #----------------------------------------------------------
 # .function_WRITE_LINE
 #----------------------------------------------------------
@@ -499,6 +719,42 @@ function write_line
 
 
 
+
+#----------------------------------------------------------
+# .function_GRAPHICAL_NEW_SECTION
+#----------------------------------------------------------
+function graphical_new_section
+{
+    Param (
+        [Parameter(Position=0, mandatory=$true)]
+	    [System.string]
+	    $msg,
+        [Parameter(Position=1, mandatory=$true)]
+	    [System.Object]
+	    $CBM_SETTINGS)
+
+    write-host $CBM_SETTINGS.scr_buffer_box_nil
+    Write-Host $CBM_SETTINGS.scr_buffer_box
+    Write-Host $CBM_SETTINGS.scr_buffer_box
+    write-host $CBM_SETTINGS.scr_buffer_box_nil        
+
+    $text = $CBM_SETTINGS.scr_buffer_indent + $msg
+    $column = $text.Length
+	Write-Host $text -NoNewLine
+	complete_line $column $CBM_SETTINGS.width_of_console
+	Write-Host $CBM_SETTINGS.double_dash
+
+    underline_title -underline_this $text $CBM_SETTINGS
+
+}#end graphical_new_section
+
+
+
+
+
+#----------------------------------------------------------
+# .function_WRITE_MODEL_NAME
+#----------------------------------------------------------
 function write_model_name
 {
    Param (
@@ -522,7 +778,7 @@ function write_model_name
 	$msg4 = $name
 	Write-Host $msg4 -ForegroundColor $CBM_SETTINGS.foreground_network -NoNewline
 	$lineRemaining = (" " * ($CBM_SETTINGS.width_of_console - ($msg.Length + $msg2.length + $msg3.Length + $msg4.length) + 1))
-	Write-host $lineRemaining -NoNewline
+	Write-Host $lineRemaining -NoNewline
 	Write-Host $CBM_SETTINGS.double_dash -NoNewline
 
 	
@@ -532,6 +788,36 @@ function write_model_name
 
 
 
+
+#----------------------------------------------------------
+# .function_REPORT_TO_CONSOLE
+#----------------------------------------------------------
+function report_to_console
+{
+	Param (
+		[Parameter(Position=0,Mandatory=$true)]
+		[System.Int32]
+		$valid_,
+		[Parameter(Position=1,Mandatory=$true)]
+		[System.Int32]
+		$not_valid_,
+		[Parameter(Position=2, mandatory=$true)]
+		[System.Object]
+		$CBM_SETTINGS,
+		[Parameter(Position=3, mandatory=$true)]
+		[System.String]
+		$PSHELL_LOG_FILE)
+		
+	write-host "`r" -nonewline
+	write-host $CBM_SETTINGS.scr_buffer_box_nil
+	$msg = "VALID MODELS: $($valid_)"
+	write_line $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+	$msg = "MISSING MODELS: $($not_valid_)"
+	write_line $msg $CBM_SETTINGS
+	write_to_log $msg $PSHELL_LOG_FILE
+
+}
 }
 
 
@@ -539,6 +825,25 @@ function write_model_name
 
 End {
 
-write-host "DONE"
+	Write-Host $CBM_SETTINGS.scr_buffer_box_nil
+	notepad $PSHELL_LOG_FILE
+	Write-Host "Press any key to quit"
+	$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
+
+    # return console to normal    
+    $ui_console = (Get-Host).UI.RawUI
+    $old_bc = $ui_console.BackgroundColor
+    $old_fc = $ui_console.ForegroundColor
+    $old_title = $ui_console.WindowTitle
+
+    # Change window to signal we're now in powershell
+    $ui_console.BackgroundColor = $CBM_SETTINGS.default_background
+    $ui_console.ForegroundColor = $CBM_SETTINGS.default_foreground
+
+    # title 
+    $gui_title = "Powershell"
+    $ui_console.WindowTitle = $gui_title
+    cls
+	
 }
