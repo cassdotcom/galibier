@@ -1,0 +1,64 @@
+<NotepadPlus>
+    <UserLang name="casshout" ext="ps1, psm1" udlVersion="2.1">
+        <Settings>
+            <Global caseIgnored="no" allowFoldOfComments="no" foldCompact="no" forcePureLC="0" decimalSeparator="0" />
+            <Prefix Keywords1="no" Keywords2="no" Keywords3="yes" Keywords4="no" Keywords5="no" Keywords6="yes" Keywords7="no" Keywords8="yes" />
+        </Settings>
+        <KeywordLists>
+            <Keywords name="Comments">00# 01 02 03&lt;# 04#&gt;</Keywords>
+            <Keywords name="Numbers, prefix1"></Keywords>
+            <Keywords name="Numbers, prefix2"></Keywords>
+            <Keywords name="Numbers, extras1"></Keywords>
+            <Keywords name="Numbers, extras2"></Keywords>
+            <Keywords name="Numbers, suffix1"></Keywords>
+            <Keywords name="Numbers, suffix2"></Keywords>
+            <Keywords name="Numbers, range"></Keywords>
+            <Keywords name="Operators1">! &quot; % &amp; ( ) * , / : ; ? @ [ \ ] ^ ` | ~ + &lt; = &gt;</Keywords>
+            <Keywords name="Operators2"></Keywords>
+            <Keywords name="Folders in code1, open">{</Keywords>
+            <Keywords name="Folders in code1, middle"></Keywords>
+            <Keywords name="Folders in code1, close">}</Keywords>
+            <Keywords name="Folders in code2, open"></Keywords>
+            <Keywords name="Folders in code2, middle"></Keywords>
+            <Keywords name="Folders in code2, close"></Keywords>
+            <Keywords name="Folders in comment, open"></Keywords>
+            <Keywords name="Folders in comment, middle"></Keywords>
+            <Keywords name="Folders in comment, close"></Keywords>
+            <Keywords name="Keywords1">begin catch continue do default else elseif end filter finally for foreach function if in param process switch try until where while Param Try Catch Finally Begin Process End</Keywords>
+            <Keywords name="Keywords2">add-content add-history add-member add-pssnapin clear-content clear-item clear-itemproperty clear-variable compare-object convertfrom-securestring convert-path convertto-html convertto-securestring copy-item copy-itemproperty export-alias export-clixml export-console export-csv foreach-object format-custom format-list format-table format-wide get-acl get-alias get-authenticodesignature get-childitem get-command get-content get-credential get-culture get-date get-eventlog get-executionpolicy get-help get-history get-host get-item get-itemproperty get-location get-member get-pfxcertificate get-process get-psdrive get-psprovider get-pssnapin get-service get-tracesource get-uiculture get-unique get-variable get-wmiobject group-object import-alias import-clixml import-csv invoke-expression invoke-history invoke-item join-path measure-command measure-object move-item move-itemproperty new-alias new-item new-itemproperty new-object new-psdrive new-service new-timespan new-variable out-default out-file out-host out-null out-printer out-string pop-location push-location read-host remove-item remove-itemproperty remove-psdrive remove-pssnapin remove-variable rename-item rename-itemproperty resolve-path restart-service resume-service select-object select-string set-acl set-alias set-authenticodesignature set-content set-date set-executionpolicy set-item set-itemproperty set-location set-psdebug set-service set-tracesource set-variable sort-object split-path start-service start-sleep start-transcript stop-process stop-service stop-transcript suspend-service tee-object test-path trace-command update-formatdata update-typedata where-object write-debug write-error write-host write-output write-progress write-verbose write-warning Add-Computer Add-Content Add-History Add-Member Add-PSSnapin Add-Type Checkpoint-Computer Clear-Content Clear-EventLog Clear-History Clear-Item Clear-ItemProperty Clear-Variable Compare-Object Complete-Transaction Connect-WSMan ConvertFrom-Csv ConvertFrom-SecureString ConvertFrom-StringData Convert-Path ConvertTo-Csv ConvertTo-Html ConvertTo-SecureString ConvertTo-Xml Copy-Item Copy-ItemProperty Debug-Process Disable-ComputerRestore Disable-PSBreakpoint Disable-PSSessionConfiguration Disable-WSManCredSSP Disconnect-WSMan Enable-ComputerRestore Enable-PSBreakpoint Enable-PSRemoting Enable-PSSessionConfiguration Enable-WSManCredSSP Enter-PSSession Exit-PSSession Export-Alias Export-Clixml Export-Console Export-Counter Export-Csv Export-FormatData Export-ModuleMember Export-PSSession ForEach-Object Format-Custom Format-List Format-Table Format-Wide Get-Acl Get-Alias Get-AuthenticodeSignature Get-ChildItem Get-Command Get-ComputerRestorePoint Get-Content Get-Counter Get-Credential Get-Culture Get-Date Get-Event Get-EventLog Get-EventSubscriber Get-ExecutionPolicy Get-FormatData Get-Help Get-History Get-Host Get-HotFix Get-Item Get-ItemProperty Get-Job Get-Location Get-Member Get-Module Get-PfxCertificate Get-Process Get-PSBreakpoint Get-PSCallStack Get-PSDrive Get-PSProvider Get-PSSession Get-PSSessionConfiguration Get-PSSnapin Get-Random Get-Service Get-TraceSource Get-Transaction Get-UICulture Get-Unique Get-Variable Get-WinEvent Get-WmiObject Get-WSManCredSSP Get-WSManInstance Group-Object Import-Alias Import-Clixml Import-Counter Import-Csv Import-LocalizedData Import-Module Import-PSSession Invoke-Command Invoke-Expression Invoke-History Invoke-Item Invoke-WmiMethod Invoke-WSManAction Join-Path Limit-EventLog Measure-Command Measure-Object Move-Item Move-ItemProperty New-Alias New-Event New-EventLog New-Item New-ItemProperty New-Module New-ModuleManifest New-Object New-PSDrive New-PSSession New-PSSessionOption New-Service New-TimeSpan New-Variable New-WebServiceProxy New-WSManInstance New-WSManSessionOption Out-Default Out-File Out-GridView Out-Host Out-Null Out-Printer Out-String Pop-Location Push-Location Read-Host Receive-Job Register-EngineEvent Register-ObjectEvent Register-PSSessionConfiguration Register-WmiEvent Remove-Computer Remove-Event Remove-EventLog Remove-Item Remove-ItemProperty Remove-Job Remove-Module Remove-PSBreakpoint Remove-PSDrive Remove-PSSession Remove-PSSnapin Remove-Variable Remove-WmiObject Remove-WSManInstance Rename-Item Rename-ItemProperty Reset-ComputerMachinePassword Resolve-Path Restart-Computer Restart-Service Restore-Computer Resume-Service Select-Object Select-String Select-Xml Send-MailMessage Set-Acl Set-Alias Set-AuthenticodeSignature Set-Content Set-Date Set-ExecutionPolicy Set-Item Set-ItemProperty Set-Location Set-PSBreakpoint Set-PSDebug Set-PSSessionConfiguration Set-Service Set-StrictMode Set-TraceSource Set-Variable Set-WmiInstance Set-WSManInstance Set-WSManQuickConfig Show-EventLog Sort-Object Split-Path Start-Job Start-Process Start-Service Start-Sleep Start-Transaction Start-Transcript Stop-Computer Stop-Job Stop-Process Stop-Service Stop-Transcript Suspend-Service Tee-Object Test-ComputerSecureChannel Test-Connection Test-ModuleManifest Test-Path Test-WSMan Trace-Command Undo-Transaction Unregister-Event Unregister-PSSessionConfiguration Update-FormatData Update-List Update-TypeData Use-Transaction Wait-Event Wait-Job Wait-Process Where-Object Write-Debug Write-Error Write-EventLog Write-Host Write-Output Write-Progress Write-Verbose Write-Warning ac asnp clc cli clp clv cpi cpp cvpa diff epal epcsv fc fl % ft fw gal gc gci gcm gdr ghy gi gl gm gp gps group gsv gsnp gu gv gwmi iex ihy ii ipal ipcsv mi mp nal ndr ni nv oh rdr ri rni rnp rp rsnp rv rvpa sal sasv sc select si sl sleep sort sp spps spsv sv tee ? write cat cd clear cp h history kill lp ls mount mv popd ps pushd pwd r rm rmdir echo cls chdir copy del dir erase move rd ren set type ac asnp clc cli clp clv cpi cpp cvpa dbp diff ebp epal epcsv fc fl foreach % ft fw gal gbp gc gci gcm gdr gcs ghy gi gl gm gp gps group gsv gsnp gu gv gwmi iex ihy ii iwmi ipal ipcsv mi mp nal ndr ni nv oh ogv grid rbp rdr ri rni rnp rp rsnp rv rwmi rvpa sal sasv sbp sc select si sl swmi sleep sort sp spps spsv sti sto stu sv tee where ? write cat exec clear cp h history kill lp ls mount mv popd ps pushd pwd r rm rmdir echo cls chdir copy del dir erase move rd ren set type icm measure new ss gpv ra nho ?: ?? apv gvs gvpscx galpscx gcmpscx gdrpscx e up rehash ep ehp egp eghp pager ql qs hrexc winexc cvfb64 cvtb64 cvxml fhex fxml gcb gfvi rnd gsp ln mail ocb ping sxml touch saps adl asp apropos ephy ipasm iphy lorem ghm gtn reduce rver srts sro swr vmadmin man help bp skbp edit rand RandomLine Get-Quote gqt gas sas sign say gph Select</Keywords>
+            <Keywords name="Keywords3">System.</Keywords>
+            <Keywords name="Keywords4">return throw break continue</Keywords>
+            <Keywords name="Keywords5">Alias Parameter</Keywords>
+            <Keywords name="Keywords6">$</Keywords>
+            <Keywords name="Keywords7">modify_gui get_cbm_settings test_cbm_loc complete_line underline_title write_line write_new_section load_model_db catch_error write_header graphical_new_section report_resultswrite_to_log write_to_log Get-TimeStamp write_model_name get_log_file report_to_console</Keywords>
+            <Keywords name="Keywords8">-</Keywords>
+            <Keywords name="Delimiters">00&quot; 01&apos; 02&quot; 03&apos; 04 05&apos; 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23</Keywords>
+        </KeywordLists>
+        <Styles>
+            <WordsStyle name="DEFAULT" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="COMMENTS" fgColor="006400" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="1" fontSize="9" nesting="0" />
+            <WordsStyle name="LINE COMMENTS" fgColor="006400" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="NUMBERS" fgColor="800080" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="1" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS1" fgColor="00008B" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS2" fgColor="0000FF" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS3" fgColor="008080" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS4" fgColor="000080" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="1" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS5" fgColor="00BFFF" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS6" fgColor="FF4500" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS7" fgColor="8A2BE2" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="1" fontSize="9" nesting="0" />
+            <WordsStyle name="KEYWORDS8" fgColor="0080FF" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="2" fontSize="9" nesting="0" />
+            <WordsStyle name="OPERATORS" fgColor="333333" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="1" fontSize="9" nesting="0" />
+            <WordsStyle name="FOLDER IN CODE1" fgColor="05023C" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="FOLDER IN CODE2" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="FOLDER IN COMMENT" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS1" fgColor="8B0000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS2" fgColor="E10000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="3" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS3" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS4" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS5" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS6" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS7" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+            <WordsStyle name="DELIMITERS8" fgColor="000000" bgColor="FFFFFF" fontName="Lucida Console" fontStyle="0" fontSize="9" nesting="0" />
+        </Styles>
+    </UserLang>
+</NotepadPlus>
