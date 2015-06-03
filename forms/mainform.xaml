@@ -1,0 +1,26 @@
+<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Class="Window1"
+	Name="Window"
+	Title="MainForm"
+	Width="794" Height="583" Background="#FFEEEEEE" Icon="C:\Users\cass\Documents\Visual Studio 2013\Projects\pshell_gui\forms\sgn.png" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Topmost="True">
+	<Window.Foreground>
+		<ImageBrush ImageSource="C:\Users\cass\Documents\Visual Studio 2013\Projects\pshell_gui\forms\sgn.png"/>
+	</Window.Foreground>
+
+	<Grid Name="LayoutRoot" Margin="0,10,0,0">
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Grid.Background>
+			<ImageBrush ImageSource="C:\Users\cass\Documents\Visual Studio 2013\Projects\pshell_gui\forms\sgn.png" Opacity="0.4"/>
+		</Grid.Background>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<Label Name="logo_name" Content="NETWORK PLANNING" Margin="10,10,0,502.035" FontFamily="/pshell_gui;component/Fonts/#Calibri" FontSize="21.333" FontWeight="ExtraBold" TextOptions.TextFormattingMode="Display" Foreground="#FF292A3A" BorderBrush="#FF0A0E5B" BorderThickness="0,0,0,4" HorizontalContentAlignment="Center" RenderTransformOrigin="0.5,1.209" HorizontalAlignment="Left">
+		</Label>
+		<Viewbox HorizontalAlignment="Left" Height="473" Margin="10,65,0,0" VerticalAlignment="Top" Width="160" Stretch="Fill"/>
+	</Grid>
+</Window>
